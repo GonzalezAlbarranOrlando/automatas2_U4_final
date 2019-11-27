@@ -356,15 +356,15 @@ public class VentanaU3_01 extends javax.swing.JFrame {
                 case 2:
                     // write t1; read a;
                     matriz[i][0] = t_aux.nextToken();
-                    matriz[i][1] = "";
-                    matriz[i][2] = "";
+                    matriz[i][1] = "O";
+                    matriz[i][2] = "O";
                     matriz[i][3] = t_aux.nextToken();
                     break;
                 case 1:
                     // write t1; read a;
                     matriz[i][0] = "";
-                    matriz[i][1] = "";
-                    matriz[i][2] = "";
+                    matriz[i][1] = "O";
+                    matriz[i][2] = "O";
                     matriz[i][3] = t_aux.nextToken();
                     break;
                 default:
@@ -405,9 +405,9 @@ public class VentanaU3_01 extends javax.swing.JFrame {
         System.out.println("Op1" + "\t" + "Op2" + "\t" + "Op" + "\t" + "Res");
         for (int i = 0; i < arrTemp.length; i++) {
             if (arrTemp[i] != null && !"".equals(arrTemp[i])) {
-                System.out.println(arrOp1[i] + "\t" + arrOp2[i] + "\t" + arrOp[i] + "\t" + arrTemp[i]);
+                    System.out.println(arrOp1[i] + "\t" + arrOp2[i] + "\t" + arrOp[i] + "\t" + arrTemp[i]);
+                }
             }
-        }
         System.out.println("****************************************");
         System.out.println("\n" + "\n");
     }
@@ -421,7 +421,9 @@ public class VentanaU3_01 extends javax.swing.JFrame {
         for (int i = 0; i < temp.length; i++) {
             if (temp[i] != null && !"".equals(temp[i]) && !" ".equals(temp[i])) {
                 if ("O".equals(op2[i]) || "O".equals(op[i]) || "O".equals(op1[i])) {
-//                    op1[i] = "";
+                    if ("O".equals(op1[i])) {
+                        op1[i] = "";                        
+                    }
                     op2[i] = "";
                     op[i] = "";
                     res += op1[i] + "\t" + op2[i] + "\t" + op[i] + "\t" + temp[i] + "\n";
@@ -899,8 +901,8 @@ public class VentanaU3_01 extends javax.swing.JFrame {
                 case 1:
                     // write t1; read a;
                     matriz[i][0] = "";
-                    matriz[i][1] = "";
-                    matriz[i][2] = "";
+                    matriz[i][1] = "O";
+                    matriz[i][2] = "O";
                     matriz[i][3] = t_aux.nextToken();
                     break;
                 default:

@@ -13,5 +13,3 @@ IF(B<C){
       A=B*C;
     }
 WRITE(A);
-
-
