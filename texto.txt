@@ -1,0 +1,17 @@
+INT A;
+INT B;
+INT C;
+WRITE('Ingresa un valor: ');
+READ(B);
+WRITE('Ingresa un valor: ');
+READ(C);
+IF(B<C){
+    WRITE('La suma es: ');
+    A=B+C;
+  }ELSE{
+      WRITE('La resta es: ');
+      A=B*C;
+    }
+WRITE(A);
+
+

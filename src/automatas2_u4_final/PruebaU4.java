@@ -14,14 +14,8 @@ import java.util.StringTokenizer;
 public class PruebaU4 {
     
     
-    static String[] arrTemp = new String[100];
-    static String[] arrOp1 = new String[100];
-    static String[] arrOp2 = new String[100];
-    static String[] arrOp = new String[100];
-    static int contMsg=0;
-
-    
-    
+ 
+    static int contMsg=0;      
     static String encabezado="TITLE codigo prueba\n" +
 ".MODEL SMALL\n" +
 ".STACK 64\n";    
@@ -83,12 +77,7 @@ public class PruebaU4 {
             }else if (m[i][2].contains("/")) { 
                 div(m[i][0],m[i][1],m[i][3]);
             }else if (m[i][2].contains("<")||m[i][2].contains(">")) { 
-                condicion(m[i][0],m[i][1],m[i][2],m[i][3]);
-            
-            
-            
-            
-            
+                condicion(m[i][0],m[i][1],m[i][2],m[i][3]);                                                            
             }else if(m[i][3].contains("READ")){ //READ A
                 read(m[i][0]);
             }else if(m[i][3].contains("WRITE")){ //WRITE A || WRITE 'DAME EL PRIMER VALOR DE C:'
@@ -102,29 +91,15 @@ public class PruebaU4 {
             else if(m[i][3].contains(":")){ //10: 
                 code+=m[i][3]+"\n\n";
             }else if(validacionNum(m[i][3])){ //goto 10
-                code+="jmp "+m[i][3]+"\n\n";
-                
-            
-  
-            }
-           
-            
+                code+="jmp "+m[i][3]+"\n\n";                              
+            }                       
             else if(m[i][0].equals("")||m[i][1].equals("")||m[i][2].equals("")){ // INT A
                 asignacionData("?",m[i][3]); 
-            }
-            
-            
-            
-            
+            }                                                
             if(validarNombreTemp(m[i][3])){ // B C + T1
                 asignacionData("?",m[i][3]); 
-            }
-            
-            
-            
-        }
-        
-        
+            }                                    
+        }                
     }
     
         
