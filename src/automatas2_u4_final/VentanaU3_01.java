@@ -777,7 +777,14 @@ public class VentanaU3_01 extends javax.swing.JFrame {
                 tablaC += aux + "\t\t\t" + "WRITE" + "\n";
                 tablaBloques += aux + "\t\t\t" + "WRITE" + "\n";
 
-            } else { //--------------------------- asignacion
+            } 
+            else if (array[0].contains("INT")) { // --------------(INT Z;)                                              
+                System.out.println("" + array[1] + "\n");
+                codigoI += "" + array[1] + "\n";
+                tablaC += "\t\t\t" + array[1] + "\n";
+                tablaBloques += "\tO\tO\t" + array[1] + "\n";
+            }                        
+            else { //--------------------------- asignacion
                 String aux = "", op, op1, res;
                 for (int i = 2; i < array.length; i++) {//Z = ... ;
                     if (array[i].equals(";")) {
