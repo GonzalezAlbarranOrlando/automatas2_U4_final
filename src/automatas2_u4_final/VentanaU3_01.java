@@ -13,7 +13,8 @@ import java.io.PrintWriter;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-/**mbjbk
+/**
+ * 
  *
  * @author Salinas
  */
@@ -36,6 +37,16 @@ public class VentanaU3_01 extends javax.swing.JFrame {
     static String textoInterfaz = "";
 
     static String[] lineas;
+
+    static int contMsg = 0;
+    static String encabezado = "TITLE codigo prueba\n"
+            + ".MODEL SMALL\n"
+            + ".STACK 64\n";
+    static String data = ".data\n";
+    static String code = "\n.code\n"
+            + "mov ax, @data\n"
+            + "mov ds,ax\n\n";
+    static String codigoE;
 
     public VentanaU3_01() {
         initComponents();
@@ -181,9 +192,188 @@ public class VentanaU3_01 extends javax.swing.JFrame {
         tablaFinal();
         bloques(tablaBloques);//separar por bloques
         txtResultado2.setText(textoInterfaz);
+        
+        System.out.println(textoInterfaz);
+        
+        String[][] m=tabla_to_mat1(textoInterfaz);
+        codigoEnsamblador(m);
+        codigoE=encabezado+data+code+".exit\nend";
+        System.out.println(codigoE);
+        
+        
 
     }//GEN-LAST:event_procesarBtnActionPerformed
 
+    
+    
+    
+        static void codigoEnsamblador(String[][]m){
+        for (int i = 0; i < m.length; i++) {
+            if (m[i][2].contains("+")) { 
+                suma(m[i][0],m[i][1],m[i][3]);
+            }else if (m[i][2].contains("-")) { 
+                resta(m[i][0],m[i][1],m[i][3]);
+            }else if (m[i][2].contains("*")) { 
+                mul(m[i][0],m[i][1],m[i][3]);
+            }else if (m[i][2].contains("/")) { 
+                div(m[i][0],m[i][1],m[i][3]);
+            }else if (m[i][2].contains("<")||m[i][2].contains(">")) { 
+                condicion(m[i][0],m[i][1],m[i][2],m[i][3]);                                                            
+            }else if(m[i][3].contains("READ")){ //READ A
+                read(m[i][0]);
+            }else if(m[i][3].contains("WRITE")){ //WRITE A || WRITE 'DAME EL PRIMER VALOR DE C:'
+                if (m[i][0].contains("'")) {  //WRITE 'DAME EL PRIMER VALOR DE C:'
+                    
+                    writeMsg(asignacionDataMsg(m[i][0]));                     
+                }else{//WRITE A 
+                    writeVar(m[i][0]);                     
+                }
+            }                                                      
+            else if(m[i][3].contains(":")){ //10: 
+                code+=m[i][3]+"\n\n";
+            }else if(validacionNum(m[i][3])){ //goto 10
+                code+="jmp "+m[i][3]+"\n\n";                              
+            }                       
+            else if(!m[i][2].equals("=")){ // INT A
+                asignacionData("?",m[i][3]); 
+            }                                                
+            if(validarNombreTemp(m[i][3])){ // B C + T1
+                asignacionData("?",m[i][3]); 
+            }                                    
+        }                
+    }
+    
+        
+    static void suma(String op1,String op2,String res){
+        code+=";realizar suma\n";
+        code+="mov al,"+op1+"\n";
+        code+="add al,"+op2+"\n";
+        code+="mov "+res+",al\n\n";        
+    }
+    static void resta(String op1,String op2,String res){
+        code+=";realizar resta\n";
+        code+="mov al,"+op1+"\n";
+        code+="sub al,"+op2+"\n";
+        code+="mov "+res+",al\n\n";        
+    }  
+    static void mul(String op1,String op2,String res){
+        code+=";realizar mul\n";
+        code+="mov al,"+op1+"\n";
+        code+="mov bl,"+op2+"\n";
+        code+="mul bl\n";
+        code+="mov "+res+",al\n\n";        
+    }
+    static void div(String op1,String op2,String res){
+        code+=";realizar div\n";
+        code+="xor ax,ax\n";
+        code+="mov al,"+op1+"\n";
+        code+="mov bl,al\n";
+        code+="mov al,"+op2+"\n";
+        code+="div bl\n";
+        code+="mov bl,al\n";
+        code+="mov "+res+",al\n\n";        
+    }
+    static void condicion(String op1,String op2,String op,String res){
+        code+=";realizar comparacion\n";
+        if (op.equals(">")) {
+            op="ja";
+        }else{
+            op="jb";
+        }
+        code+="mov cl,"+op1+"\n";
+        code+="cmp cl,"+op2+"\n";
+        code+=op+" "+res+"\n\n";
+    }
+
+    static void writeVar(String var){
+        code+=";escribir una variable\n";
+        code+="mov dl,"+var+"\n";
+        code+="add dl,30h\n";
+        code+="mov ah,02h\n";
+        code+="int 21h\n\n";       
+    }
+    static void writeMsg(String msg){
+        code+=";escribir un mensaje\n";
+        code+="mov ah,09h\n";
+        code+="lea dx,"+msg+"\n";
+        code+="int 21h\n\n";        
+    }
+    static void read(String op1){
+        code+=";leer una variable \n";
+        code+="mov ah, 01h\n";
+        code+="int 21h\n";
+        code+="sub al,30h\n";
+        code+="mov "+op1+",al\n\n";
+    }     
+    static void asignacionData(String op1,String res){        
+        data+=res+" db "+op1+"\n";                
+    }
+    static String asignacionDataMsg(String op1){
+        String msg=newMsg();
+        data+=msg+" db "+op1+",10,13,'$'\n";
+        return msg;
+    }
+    static String newMsg() {
+        return "msg" + Integer.toString(++contMsg);
+    }
+    
+    
+    static boolean validarNombreTemp(String s){
+        if (!s.startsWith("T")) {
+            return false;
+        }
+        for (int i = 1; i < s.length(); i++) {
+            if (!"1234567890".contains(String.valueOf(s.charAt(i)))) { 
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    
+    
+    static String[][] tabla_to_mat1(String s) {
+        StringTokenizer t = new StringTokenizer(s, "\n");
+        String[][] matriz = new String[t.countTokens()][4];
+
+        for (int i = 0; i < matriz.length; i++) {
+            StringTokenizer t_aux = new StringTokenizer(t.nextToken(), "\t");
+            switch (t_aux.countTokens()) {
+                case 4:
+                    //t1=a+b;
+                    matriz[i][0] = t_aux.nextToken();
+                    matriz[i][1] = t_aux.nextToken();
+                    matriz[i][2] = t_aux.nextToken();
+                    matriz[i][3] = t_aux.nextToken();
+                    break;
+                case 3:
+                    // z = t1;
+                    matriz[i][0] = t_aux.nextToken();
+                    matriz[i][1] = "";
+                    matriz[i][2] = t_aux.nextToken();
+                    matriz[i][3] = t_aux.nextToken();
+                    break;
+                case 2:
+                    // write t1; read a;
+                    matriz[i][0] = t_aux.nextToken();
+                    matriz[i][1] = "";
+                    matriz[i][2] = "";
+                    matriz[i][3] = t_aux.nextToken();
+                    break;
+                case 1:
+                    // write t1; read a;
+                    matriz[i][0] = "";
+                    matriz[i][1] = "";
+                    matriz[i][2] = "";
+                    matriz[i][3] = t_aux.nextToken();
+                    break;
+                default:
+                    break;
+            }
+            
+        }
+        return matriz;
+    }
     static void tablaFinal() {
         tablaC = "";
         for (int i = 0; i < arrTemp.length; i++) {
@@ -777,14 +967,12 @@ public class VentanaU3_01 extends javax.swing.JFrame {
                 tablaC += aux + "\t\t\t" + "WRITE" + "\n";
                 tablaBloques += aux + "\t\t\t" + "WRITE" + "\n";
 
-            } 
-            else if (array[0].contains("INT")) { // --------------(INT Z;)                                              
+            } else if (array[0].contains("INT") || array[0].equals("INT")) { // --------------(INT Z;)                                              
                 System.out.println("" + array[1] + "\n");
                 codigoI += "" + array[1] + "\n";
                 tablaC += "\t\t\t" + array[1] + "\n";
-                tablaBloques += "\tO\tO\t" + array[1] + "\n";
-            }                        
-            else { //--------------------------- asignacion
+                tablaBloques += "O\tO\tO\t" + array[1] + "\n";
+            } else { //--------------------------- asignacion
                 String aux = "", op, op1, res;
                 for (int i = 2; i < array.length; i++) {//Z = ... ;
                     if (array[i].equals(";")) {
@@ -1753,4 +1941,3 @@ public class VentanaU3_01 extends javax.swing.JFrame {
     private javax.swing.JTextArea txtResultado2;
     // End of variables declaration//GEN-END:variables
 }
-
