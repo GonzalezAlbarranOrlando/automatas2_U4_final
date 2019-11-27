@@ -230,9 +230,9 @@ public class VentanaU3_01 extends javax.swing.JFrame {
                 }
             }                                                      
             else if(m[i][3].contains(":")){ //10: 
-                code+=m[i][3]+"\n\n";
+                code+="e"+m[i][3]+"\n\n";
             }else if(validacionNum(m[i][3])){ //goto 10
-                code+="jmp "+m[i][3]+"\n\n";                              
+                code+="jmp e"+m[i][3]+"\n\n";                              
             }                       
             else if(!m[i][2].equals("=")){ // INT A
                 asignacionData("?",m[i][3]); 
@@ -282,7 +282,7 @@ public class VentanaU3_01 extends javax.swing.JFrame {
         }
         code+="mov cl,"+op1+"\n";
         code+="cmp cl,"+op2+"\n";
-        code+=op+" "+res+"\n\n";
+        code+=op+" e"+res+"\n";
     }
 
     static void writeVar(String var){
