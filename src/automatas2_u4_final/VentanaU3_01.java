@@ -122,22 +122,24 @@ public class VentanaU3_01 extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(abrirBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(20, 20, 20)
                         .addComponent(guardarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(20, 20, 20)
-                        .addComponent(limpiarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(limpiarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(procesarBtn))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 357, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(10, 10, 10)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,13 +192,16 @@ public class VentanaU3_01 extends javax.swing.JFrame {
         System.out.println("Codigo intermedio: \n" + codigoI + "\n");
         System.out.println("Tabla de Cuadruples: \n" + tablaC + "\n");
         txtResultado1.setText(codigoI);
+        String aux=tablaC;
         tablaFinal();
         bloques(tablaBloques);//separar por bloques
+        
+        
+        textoInterfaz=aux;//se usa la tabla de cuadruples sin optimizar
         txtResultado1.setText(textoInterfaz);
-        
         System.out.println(textoInterfaz);
-        
         String[][] m=tabla_to_mat1(textoInterfaz);
+        imprimirMatriz1(m);
         codigoEnsamblador(m);
         codigoE=encabezado+data+code+".exit\nend";
         System.out.println(codigoE);
@@ -290,6 +295,7 @@ public class VentanaU3_01 extends javax.swing.JFrame {
     }
 
     static void writeVar(String var){
+        code+=";salto de linea\nmov ah,09h\nlea dx,salto\nint 21h\n";
         code+=";escribir una variable\n";
         code+="mov dl,"+var+"\n";
         code+="add dl,30h\n";
@@ -385,6 +391,14 @@ public class VentanaU3_01 extends javax.swing.JFrame {
         }
         return matriz;
     }
+    static void imprimirMatriz1(String[][] m) {
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < m[i].length; j++) {
+                System.out.print(m[i][j] + "$");	// Imprime elemento
+            }
+            System.out.println();	// Imprime salto de línea
+        }
+    }    
     static void tablaFinal() {
         tablaC = "";
         for (int i = 0; i < arrTemp.length; i++) {
@@ -1000,6 +1014,7 @@ public class VentanaU3_01 extends javax.swing.JFrame {
                 op1 = aux; //op1 = "Temp10";
                 System.out.println(res + "=" + op1 + "\n");
                 codigoI += res + "=" + op1 + "\n";
+                tablaC += op1 + "\t\t=\t" + res + "\n";
                 tablaBloques += op1 + "\t\t=\t" + res + "\n";
             }
             for (int i = 0; i < array.length; i++) { //--------------------------- quitar una sentencia

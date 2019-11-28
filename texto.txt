@@ -1,15 +1,10 @@
-INT A;
+INT J;
 INT B;
-INT C;
 WRITE('Ingresa un valor: ');
 READ(B);
-WRITE('Ingresa un valor: ');
-READ(C);
-IF(B<C){
-    WRITE('La suma es: ');
-    A=B+C;
-  }ELSE{
-      WRITE('La multiplicacion es: ');
-      A=B*C;
-    }
-WRITE(A);
+J=0;
+WHILE(J<B){
+    J=J+1;
+    WRITE(J);
+}
+
