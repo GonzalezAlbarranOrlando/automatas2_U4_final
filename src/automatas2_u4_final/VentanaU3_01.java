@@ -42,7 +42,8 @@ public class VentanaU3_01 extends javax.swing.JFrame {
     static String encabezado = "TITLE codigo prueba\n"
             + ".MODEL SMALL\n"
             + ".STACK 64\n";
-    static String data = ".data\n";
+    static String data = ".data\n"
+            + "salto DB 13,10,\"$\"\n";
     static String code = "\n.code\n"
             + "mov ax, @data\n"
             + "mov ds,ax\n\n";
@@ -191,7 +192,7 @@ public class VentanaU3_01 extends javax.swing.JFrame {
         txtResultado1.setText(codigoI);
         tablaFinal();
         bloques(tablaBloques);//separar por bloques
-        txtResultado2.setText(textoInterfaz);
+        txtResultado1.setText(textoInterfaz);
         
         System.out.println(textoInterfaz);
         
@@ -199,7 +200,7 @@ public class VentanaU3_01 extends javax.swing.JFrame {
         codigoEnsamblador(m);
         codigoE=encabezado+data+code+".exit\nend";
         System.out.println(codigoE);
-        
+        txtResultado2.setText(codigoE);
         
 
     }//GEN-LAST:event_procesarBtnActionPerformed
@@ -236,7 +237,10 @@ public class VentanaU3_01 extends javax.swing.JFrame {
             }                       
             else if(!m[i][2].equals("=")){ // INT A
                 asignacionData("?",m[i][3]); 
-            }                                                
+            }
+            else if (m[i][1].equals("")&&m[i][2].equals("=")) { // op1 null = res
+                asignacionCide(m[i][0],m[i][3]);
+            }
             if(validarNombreTemp(m[i][3])){ // B C + T1
                 asignacionData("?",m[i][3]); 
             }                                    
@@ -293,6 +297,7 @@ public class VentanaU3_01 extends javax.swing.JFrame {
         code+="int 21h\n\n";       
     }
     static void writeMsg(String msg){
+        code+=";salto de linea\nmov ah,09h\nlea dx,salto\nint 21h\n";
         code+=";escribir un mensaje\n";
         code+="mov ah,09h\n";
         code+="lea dx,"+msg+"\n";
@@ -304,7 +309,13 @@ public class VentanaU3_01 extends javax.swing.JFrame {
         code+="int 21h\n";
         code+="sub al,30h\n";
         code+="mov "+op1+",al\n\n";
-    }     
+    }
+    static void asignacionCide(String op1, String res){
+        code+=";asignacion"
+                + "\n";
+        code+="mov al,"+op1+"\n";
+        code+="mov "+res+",al\n\n";
+    }
     static void asignacionData(String op1,String res){        
         data+=res+" db "+op1+"\n";                
     }
