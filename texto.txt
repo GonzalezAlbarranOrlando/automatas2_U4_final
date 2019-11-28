@@ -9,9 +9,10 @@ IF(B<C){
     WRITE('La suma es: ');
     A=B+C;
   }ELSE{
-      WRITE('La resta es: ');
+      WRITE('La multiplicacion es: ');
       A=B*C;
     }
 WRITE(A);
+
 
 
